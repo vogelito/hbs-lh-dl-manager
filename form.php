@@ -14,7 +14,7 @@
   </body>
 </html>";
   } else {
-    shell_exec('nohup fork.rb '.$e.' '.$lhp.' '.$u.' & >/dev/null 2>&1 &');
+    shell_exec('nohup fork.rb '.$e.' '.$lhp.' '.$u.' >/dev/null 2>&1 &');
     header('Location: wait.php?e='.$u);
   }
 ?>
