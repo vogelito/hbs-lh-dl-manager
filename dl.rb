@@ -8,6 +8,17 @@ require 'mime/types'
 require 'readline'
 require 'highline/import'
 
+def sanitize_filename(filename)
+  if !filename.nil?
+    return filename.to_s.gsub(/[\r\n]/,'').gsub(/[^0-9A-Za-z%.\,'\-_ \(\)\[\]\&\+]/, '_').gsub(/_+/,'_').gsub(/_$/,'')
+  end
+end
+
+def log_die(msg)
+  puts msg
+  Process.exit 1
+end
+
 # Get HBS credentials
 zip_file = false
 if ARGV.length == 2
@@ -18,21 +29,6 @@ if ARGV.length == 2
 else
   user = Readline.readline("Username: ", true)
   pass = ask("Password: ") { |q| q.echo = false }
-end
-
-#END of config
-################
-
-
-def sanitize_filename(filename)
-  if !filename.nil?
-    return filename.to_s.gsub(/[\r\n]/,'').gsub(/[^0-9A-Za-z%.\,'\-_ \(\)\[\]\&\+]/, '_').gsub(/_+/,'_').gsub(/_$/,'')
-  end
-end
-
-def log_die(msg)
-  puts msg
-  Process.exit 1
 end
 
 errors = ""
