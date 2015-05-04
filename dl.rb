@@ -86,7 +86,7 @@ toc_doc.css('tr.d_ggl1').each do |itm|
     begin
       file_content = a.get(content_url)
       file_type = fm.buffer(file_content.body)
-      file_ext = MIME::Types[file_type].first.extensions.first 
+      file_ext = MIME::Types[file_type].first.extensions.first
       puts " ># " + file_type+ ' --> ' + file_ext
       file_content.save(out_curfolder+sanitize_filename(dl_link.text)+'.'+file_ext)
     rescue
