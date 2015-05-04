@@ -7,12 +7,18 @@ require 'filemagic'
 require 'mime/types'
 require 'readline'
 require 'highline/import'
-require "./ZipFileGenerator.rb"
 
-#HBS Usernamne:
-user = ARGV[0].strip[1..-2]
-#HBS Password:
-pass = ARGV[1].strip[1..-2]
+# Get HBS credentials
+zip_file = false
+if ARGV.length == 2
+  user = ARGV[0].strip[1..-2]
+  pass = ARGV[1].strip[1..-2]
+  zip_file = true
+  require "./ZipFileGenerator.rb"
+else
+  user = Readline.readline("Username: ", true)
+  pass = ask("Password: ") { |q| q.echo = false }
+end
 
 #END of config
 ################
@@ -116,9 +122,11 @@ else
   STDOUT.flush
 end
 
-zf = ZipFileGenerator.new(zip_folder, output_file)
-zf.write()
-FileUtils.chmod(644, output_file)
+if zip_file
+  zf = ZipFileGenerator.new(zip_folder, output_file)
+  zf.write()
+  FileUtils.chmod(644, output_file)
+end
 
 puts "Zip file available: #{output_file}"
 STDOUT.flush
