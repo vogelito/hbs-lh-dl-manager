@@ -22,7 +22,7 @@ end
 def lock(file)
   # Attempts an exclusive lock and returns immediately. Returns false if
   # an exclusive lock was not obtained.
-  f = File.open('foo', File::RDWR|File::CREAT, 0644)
+  f = File.open(file, File::RDWR|File::CREAT, 0644)
   locked = f.flock(File::LOCK_NB|File::LOCK_EX)
   log_die("unable to lock file #{file}") if !locked
 
