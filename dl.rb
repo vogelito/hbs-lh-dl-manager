@@ -12,9 +12,9 @@ require "./ZipFileGenerator.rb"
 #Note: Script will save downloads to "out_<date>" folder in current working directory.
 
 #HBS Usernamne:
-user = Readline.readline("Username: ", true)
+user = ARGV[0]
 #HBS Password:
-pass = ask("Password: ") { |q| q.echo = false }
+pass = ARGV[1]
 
 #END of config
 ################
