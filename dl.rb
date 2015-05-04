@@ -29,8 +29,6 @@ def log_die(msg)
   Process.exit 1
 end
 
-zip_folder = "out_#{Time.now.to_i}#{rand(1000)}"
-
 errors = ""
 a = Mechanize.new { |agent| agent.user_agent_alias = "Mac Safari" }
 a.agent.http.verify_mode = OpenSSL::SSL::VERIFY_NONE
@@ -50,6 +48,9 @@ html_doc = Nokogiri::HTML(p_success.body)
 log_die("Unable to log in") if html_doc.css("h2").text != 'You Are Logged In'
 
 puts "Logged in"
+
+user.gsub!(/@.*/, "")
+zip_folder = "out_#{user}_#{Time.now.to_i}#{rand(1000)}"
 
 # get list of courses
 hash = Hash.new
@@ -105,3 +106,5 @@ end
 outputFile = "#{zip_folder}.zip"
 zf = ZipFileGenerator.new(zip_folder, outputFile)
 zf.write()
+
+puts "Zip file available: #{outputFile}"
