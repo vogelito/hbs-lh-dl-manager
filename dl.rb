@@ -1,3 +1,5 @@
+#!/usr/bin/ruby
+
 require "mechanize"
 require "nokogiri"
 require 'fileutils'
@@ -49,8 +51,7 @@ log_die("Unable to log in") if html_doc.css("h2").text != 'You Are Logged In'
 
 puts "Logged in"
 
-user.gsub!(/@.*/, "")
-zip_folder = "out_#{user}_#{Time.now.to_i}#{rand(1000)}"
+zip_folder = "out_#{user.gsub(/@.*/, "")}_#{Time.now.to_i}#{rand(1000)}"
 
 # get list of courses
 hash = Hash.new
