@@ -5,16 +5,14 @@ require 'filemagic'
 require 'mime/types'
 require 'readline'
 require 'highline/import'
+require "./ZipFileGenerator.rb"
 
 #Note: Script will save downloads to "out_<date>" folder in current working directory.
 
 #HBS Usernamne:
-#user = Readline.readline("Username: ", true)
+user = Readline.readline("Username: ", true)
 #HBS Password:
-#pass = ask("Password: ") { |q| q.echo = false }
-#Course id (found in URL of LH if you open a course after "?ou="
-#eg: https://lh.hbs.edu/d2l/lp/homepage/home.d2l?ou=51719
-#course_id = Readline.readline("Course ID: ", true)
+pass = ask("Password: ") { |q| q.echo = false }
 
 #END of config
 ################
@@ -30,6 +28,8 @@ def log_die(msg)
   puts msg
   Process.exit 1
 end
+
+zip_folder = "out_#{Time.now.to_i}#{rand(1000)}"
 
 errors = ""
 a = Mechanize.new { |agent| agent.user_agent_alias = "Mac Safari" }
@@ -59,7 +59,7 @@ puts "You are enrolled in #{hash.length} courses"
 hash.keys.each do |course_id|
   puts "Fetching: #{course_id} #{hash[course_id]}"
   url = 'https://lh.hbs.edu/d2l/lms/content/print/print_download.d2l?ou=' + course_id
-  out_folder = "out_" + Time.now.strftime("%y%m%d") + '/' + sanitize_filename(hash[course_id]) + '/'
+  out_folder = zip_folder + '/' + sanitize_filename(hash[course_id]) + '/'
   preview_url = 'https://lh.hbs.edu/d2l/lms/content/preview.d2l?ou='+course_id+'&tId='
   p_toc = a.get(url).body
   toc_doc = Nokogiri::HTML(p_toc)
@@ -98,7 +98,10 @@ end
 
 if errors != "" 
   puts "ERRORS:\n"+errors
+else
+  puts "Finished downloading without errors"
 end
-puts "Done without errors"
 
-
+outputFile = "#{zip_folder}.zip"
+zf = ZipFileGenerator.new(zip_folder, outputFile)
+zf.write()
