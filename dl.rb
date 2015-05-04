@@ -32,8 +32,8 @@ end
 # Get HBS credentials
 zip_file = false
 if ARGV.length == 2
-  user = ARGV[0].strip[1..-2]
-  pass = ARGV[1].strip[1..-2]
+  user = ARGV[0].strip
+  pass = ARGV[1].strip
   zip_file = true
   require "./ZipFileGenerator.rb"
 else
@@ -48,8 +48,9 @@ a.agent.http.verify_mode = OpenSSL::SSL::VERIFY_NONE
 puts "Starting..."
 STDOUT.flush
 
-lock_file = "out/#{user}.lock"
-lf= lock(lock_file)
+u = user.gsub(/@.*/, "")
+lock_file = "out/#{u}.lock"
+lf = lock(lock_file)
 
 fm = FileMagic.new(:mime_type)
 p_login = a.get('https://secure.hbs.edu/login/index.html')
@@ -57,9 +58,8 @@ form = p_login.form
 form['username'] = user
 form['password'] = pass
 
-user = user.gsub(/@.*/, "")
-zip_folder = "out/#{user}_#{Time.now.to_i}#{rand(1000)}"
-output_file = "out/#{user}.zip"
+zip_folder = "out/#{u}_#{Time.now.to_i}#{rand(1000)}"
+output_file = "out/#{u}.zip"
 File.delete(output_file) if File.exist?(output_file)
 
 p_success = form.submit 
