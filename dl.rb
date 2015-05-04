@@ -43,6 +43,11 @@ form = p_login.form
 form['username'] = user
 form['password'] = pass
 
+user.gsub!(/@.*/, "")
+zip_folder = "out/#{user}_#{Time.now.to_i}#{rand(1000)}"
+output_file = "out/#{user}.zip"
+File.delete(output_file) if File.exist?(output_file)
+
 p_success = form.submit 
 
 html_doc = Nokogiri::HTML(p_success.body)
@@ -50,8 +55,6 @@ html_doc = Nokogiri::HTML(p_success.body)
 log_die("Unable to log in") if html_doc.css("h2").text != 'You Are Logged In'
 
 puts "Logged in"
-
-zip_folder = "out_#{user.gsub(/@.*/, "")}_#{Time.now.to_i}#{rand(1000)}"
 
 # get list of courses
 hash = Hash.new
@@ -104,8 +107,7 @@ else
   puts "Finished downloading without errors"
 end
 
-outputFile = "#{zip_folder}.zip"
-zf = ZipFileGenerator.new(zip_folder, outputFile)
+zf = ZipFileGenerator.new(zip_folder, output_file)
 zf.write()
 
-puts "Zip file available: #{outputFile}"
+puts "Zip file available: #{output_file}"
