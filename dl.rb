@@ -19,6 +19,16 @@ def log_die(msg)
   Process.exit 1
 end
 
+def lock(file)
+  # Attempts an exclusive lock and returns immediately. Returns false if
+  # an exclusive lock was not obtained.
+  f = File.open('foo', File::RDWR|File::CREAT, 0644)
+  locked = f.flock(File::LOCK_NB|File::LOCK_EX)
+  log_die("unable to lock file #{file}") if !locked
+
+  return f
+end
+
 # Get HBS credentials
 zip_file = false
 if ARGV.length == 2
@@ -37,6 +47,9 @@ a.agent.http.verify_mode = OpenSSL::SSL::VERIFY_NONE
 
 puts "Starting..."
 STDOUT.flush
+
+lock_file = "out/#{user}.lock"
+lf= lock(lock_file)
 
 fm = FileMagic.new(:mime_type)
 p_login = a.get('https://secure.hbs.edu/login/index.html')
@@ -126,3 +139,4 @@ end
 
 puts "Zip file available: #{output_file}"
 STDOUT.flush
+lf.close
