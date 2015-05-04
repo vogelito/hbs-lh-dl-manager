@@ -44,13 +44,20 @@ form['username'] = user
 form['password'] = pass
 
 p_success = form.submit 
-#puts p_success.body
 
 html_doc = Nokogiri::HTML(p_success.body)
-puts a.get('https://lh.hbs.edu').body
-Process.exit
+
 if html_doc.css("h2").text == 'You Are Logged In'
   puts "Logged in"
+
+  # get list of courses
+  hash = Hash.new
+  a.get('https://lh.hbs.edu').body.scan(/<a href="\/d2l\/lp\/ouHome\/home.d2l\?ou=(\d+)" title="Enter ([^"]+)">/) {|x,y| hash[x] = y }
+  puts "You are enrolled in the following courses"
+  hash.keys.each do |x|
+    puts "#{x} #{hash[x]}"
+  end
+
   p_toc = a.get(url).body
   toc_doc = Nokogiri::HTML(p_toc)
   cnt = 1
